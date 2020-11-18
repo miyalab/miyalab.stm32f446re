@@ -35,8 +35,12 @@
 //--------------------------
 // グローバル変数宣言
 //--------------------------
-TIM_HandleTypeDef hTim6;
-TIM_HandleTypeDef hTim7;
+namespace MiYALAB{
+	namespace STM32F446RE{
+		TIM_HandleTypeDef hTim6;
+		TIM_HandleTypeDef hTim7;
+	}
+}
 
 //--------------------------------------------------------------------------------------------
 // MiYA LAB OSS
@@ -148,9 +152,9 @@ uint8_t MiYALAB::STM32F446RE::TIM_EncoderMode::Init(uint16_t Divide)
 //--------------------------------------------------------------------------------------------
 MiYALAB::STM32F446RE::TIM6_TimerMode::~TIM6_TimerMode()
 {
-	HAL_TIM_Base_Stop_IT(&hTim6);
+	HAL_TIM_Base_Stop_IT(&MiYALAB::STM32F446RE::hTim6);
 	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
-	HAL_TIM_Base_DeInit(&hTim6);
+	HAL_TIM_Base_DeInit(&MiYALAB::STM32F446RE::hTim6);
 	__HAL_RCC_TIM6_CLK_DISABLE();
 }
 
@@ -170,21 +174,21 @@ uint8_t MiYALAB::STM32F446RE::TIM6_TimerMode::Init(uint16_t Divide, uint16_t Per
 	TIM_MasterConfigTypeDef MasterConfig = {0};
 
 	// クロック許可
-	__HAL_RCC_TIM7_CLK_ENABLE();
+	__HAL_RCC_TIM6_CLK_ENABLE();
 
 	// 割込み許可
 	HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
 	// TIM6 設定
-	hTim6.Instance = TIM6;
-	hTim6.Init.Prescaler = Divide - 1;
-	hTim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hTim6.Init.Period = Period - 1;
-	hTim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+	MiYALAB::STM32F446RE::hTim6.Instance = TIM6;
+	MiYALAB::STM32F446RE::hTim6.Init.Prescaler = Divide - 1;
+	MiYALAB::STM32F446RE::hTim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+	MiYALAB::STM32F446RE::hTim6.Init.Period = Period - 1;
+	MiYALAB::STM32F446RE::hTim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 
 	// TIM6設定適用 タイマーモード
-	if(HAL_TIM_Base_Init(&hTim6) != HAL_OK){
+	if(HAL_TIM_Base_Init(&MiYALAB::STM32F446RE::hTim6) != HAL_OK){
 		return HAL_ERROR;
 	}
 
@@ -193,12 +197,12 @@ uint8_t MiYALAB::STM32F446RE::TIM6_TimerMode::Init(uint16_t Divide, uint16_t Per
 	MasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
 
 	// TIM6 マスター設定適用
-	if(HAL_TIMEx_MasterConfigSynchronization(&hTim6, &MasterConfig) != HAL_OK){
+	if(HAL_TIMEx_MasterConfigSynchronization(&MiYALAB::STM32F446RE::hTim6, &MasterConfig) != HAL_OK){
 		return HAL_ERROR;
 	}
 
 	// TIM6 タイマー割込み許可
-	HAL_TIM_Base_Start_IT(&hTim6);
+	HAL_TIM_Base_Start_IT(&MiYALAB::STM32F446RE::hTim6);
 
 	return HAL_OK;
 }
@@ -216,7 +220,7 @@ __weak void MiYALAB::STM32F446RE::TIM6_InterruptFunction()
 //--------------------------------------------------------------------------------------------
 void TIM6_DAC_IRQHandler(void)
 {
-	HAL_TIM_IRQHandler(&hTim6);
+	HAL_TIM_IRQHandler(&MiYALAB::STM32F446RE::hTim6);
 
 	MiYALAB::STM32F446RE::TIM6_InterruptFunction();
 }
@@ -228,9 +232,9 @@ void TIM6_DAC_IRQHandler(void)
 //--------------------------------------------------------------------------------------------
 MiYALAB::STM32F446RE::TIM7_TimerMode::~TIM7_TimerMode()
 {
-	HAL_TIM_Base_Stop_IT(&hTim7);
+	HAL_TIM_Base_Stop_IT(&MiYALAB::STM32F446RE::hTim7);
 	HAL_NVIC_DisableIRQ(TIM7_IRQn);
-	HAL_TIM_Base_DeInit(&hTim7);
+	HAL_TIM_Base_DeInit(&MiYALAB::STM32F446RE::hTim7);
 	__HAL_RCC_TIM7_CLK_DISABLE();
 }
 
@@ -257,14 +261,14 @@ uint8_t MiYALAB::STM32F446RE::TIM7_TimerMode::Init(uint16_t Divide, uint16_t Per
 	HAL_NVIC_EnableIRQ(TIM7_IRQn);
 
 	// TIM7 設定
-	hTim7.Instance = TIM7;
-	hTim7.Init.Prescaler = Divide - 1;
-	hTim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hTim7.Init.Period = Period - 1;
-	hTim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+	MiYALAB::STM32F446RE::hTim7.Instance = TIM7;
+	MiYALAB::STM32F446RE::hTim7.Init.Prescaler = Divide - 1;
+	MiYALAB::STM32F446RE::hTim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+	MiYALAB::STM32F446RE::hTim7.Init.Period = Period - 1;
+	MiYALAB::STM32F446RE::hTim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 
 	// TIM7設定適用 タイマーモード
-	if(HAL_TIM_Base_Init(&hTim7) != HAL_OK){
+	if(HAL_TIM_Base_Init(&MiYALAB::STM32F446RE::hTim7) != HAL_OK){
 		return HAL_ERROR;
 	}
 
@@ -273,12 +277,12 @@ uint8_t MiYALAB::STM32F446RE::TIM7_TimerMode::Init(uint16_t Divide, uint16_t Per
 	MasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
 
 	// TIM7 マスター設定適用
-	if(HAL_TIMEx_MasterConfigSynchronization(&hTim7, &MasterConfig) != HAL_OK){
+	if(HAL_TIMEx_MasterConfigSynchronization(&MiYALAB::STM32F446RE::hTim7, &MasterConfig) != HAL_OK){
 		return HAL_ERROR;
 	}
 
 	// TIM7 タイマー割込み許可
-	HAL_TIM_Base_Start_IT(&hTim7);
+	HAL_TIM_Base_Start_IT(&MiYALAB::STM32F446RE::hTim7);
 
 	return HAL_OK;
 }
@@ -296,7 +300,7 @@ __weak void MiYALAB::STM32F446RE::TIM7_InterruptFunction()
 //--------------------------------------------------------------------------------------------
 void TIM7_IRQHandler(void)
 {
-	HAL_TIM_IRQHandler(&hTim7);
+	HAL_TIM_IRQHandler(&MiYALAB::STM32F446RE::hTim7);
 
 	MiYALAB::STM32F446RE::TIM7_InterruptFunction();
 }
