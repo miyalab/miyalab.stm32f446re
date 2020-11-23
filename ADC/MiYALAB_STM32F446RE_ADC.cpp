@@ -22,9 +22,9 @@
  * SOFTWARE.
  *
  * File  : MiYALAB_STM32F446RE_ADC.cpp
- * Author: Koshiro Miyauchi
+ * Author: K.Miyauchi
  *
- * Version : 1.00
+ * Version : 1.01
  */
 
 //--------------------------
@@ -34,14 +34,15 @@
 
 //------------------------------------------------------------------------------
 // MiYA LAB OSS
-// ADC Mode クラス　Enable関数
+// ADC Mode クラス　Read関数
 // 指定したIN端子のADC値を読み込みます。
 // In : MiYALAB::STM32F446RE::AD::IN_X(X=0~15)
 // return : ADC値
+//          -1(エラー)
 //------------------------------------------------------------------------------
-uint16_t MiYALAB::STM32F446RE::ADC_Mode::Read(uint16_t In)
+int16_t MiYALAB::STM32F446RE::ADC_Mode::Read(uint16_t In)
 {
-	uint16_t AdcValue = 0;
+	int16_t AdcValue = 0;
 
 	// ハードウェア設定用データ群
 	ADC_ChannelConfTypeDef Config = {0};
@@ -69,21 +70,21 @@ uint16_t MiYALAB::STM32F446RE::ADC_Mode::Read(uint16_t In)
 	else if((In & MiYALAB::STM32F446RE::AD::IN_13) == MiYALAB::STM32F446RE::AD::IN_13) Config.Channel = ADC_CHANNEL_13;
 	else if((In & MiYALAB::STM32F446RE::AD::IN_14) == MiYALAB::STM32F446RE::AD::IN_14) Config.Channel = ADC_CHANNEL_14;
 	else if((In & MiYALAB::STM32F446RE::AD::IN_15) == MiYALAB::STM32F446RE::AD::IN_15) Config.Channel = ADC_CHANNEL_15;
-	else return 0;
+	else return -1;
 
 	// チャンネル設定 適用
 	if(HAL_ADC_ConfigChannel(&hAdc, &Config) != HAL_OK){
-		return 0;
+		return -1;
 	}
 
 	// ADC開始
 	if(HAL_ADC_Start(&hAdc) != HAL_OK){
-		return 0;
+		return -1;
 	}
 
 	// AD変換
 	if(HAL_ADC_PollForConversion(&hAdc, 10) != HAL_OK){
-		return 0;
+		return -1;
 	}
 
 	// ADC値取得
@@ -93,7 +94,7 @@ uint16_t MiYALAB::STM32F446RE::ADC_Mode::Read(uint16_t In)
 
 	// ADC停止
 	if(HAL_ADC_Stop(&hAdc) != HAL_OK){
-		return 0;
+		return -1;
 	}
 
 	return AdcValue;
@@ -140,7 +141,7 @@ uint8_t MiYALAB::STM32F446RE::ADC_Mode::Enable(uint16_t In)
 	}
 
 	// IN8 ~ IN9 の設定
-	if(In & (MiYALAB::STM32F446RE::AD::IN_8 | MiYALAB::STM32F446RE::AD::IN_9)){
+	else if(In & (MiYALAB::STM32F446RE::AD::IN_8 | MiYALAB::STM32F446RE::AD::IN_9)){
 		// クロック設定
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -155,7 +156,7 @@ uint8_t MiYALAB::STM32F446RE::ADC_Mode::Enable(uint16_t In)
 	}
 
 	// IN10 ~ IN5 の設定
-	if(In & (MiYALAB::STM32F446RE::AD::IN_10 | MiYALAB::STM32F446RE::AD::IN_11 | MiYALAB::STM32F446RE::AD::IN_12 |
+	else if(In & (MiYALAB::STM32F446RE::AD::IN_10 | MiYALAB::STM32F446RE::AD::IN_11 | MiYALAB::STM32F446RE::AD::IN_12 |
 			MiYALAB::STM32F446RE::AD::IN_13 |MiYALAB::STM32F446RE::AD::IN_14 | MiYALAB::STM32F446RE::AD::IN_15)){
 		// クロック設定
 		__HAL_RCC_GPIOC_CLK_ENABLE();
@@ -180,3 +181,7 @@ uint8_t MiYALAB::STM32F446RE::ADC_Mode::Enable(uint16_t In)
 //------------------------------------------------------------------------------
 // end of file
 //------------------------------------------------------------------------------
+/*
+ * 2020.11.23 ADC_Mode：：Enable関数の一部変更
+ *            ADC_Mode::Read関数の返り値をuint16_tからint16_tに変更し、エラー時には-1を返すように変更
+ */
